@@ -12,10 +12,17 @@ pub struct PasswordManagerApp {
 }
 
 impl PasswordManagerApp {
-    pub fn new(vault_path: &str, meta_path: &str) -> Self {
+    pub fn new() -> Self {
+        let base_dir = dirs::home_dir().unwrap().join(".password-manager");
+
+        fs::create_dir_all(&base_dir).expect("Failed to create config directory");
+
+        let vault_path = base_dir.join("vault.json");
+        let meta_path = base_dir.join("vault.meta");
+
         Self {
-            vault_path: vault_path.to_string(),
-            meta_path: meta_path.to_string(),
+            vault_path: vault_path.to_string_lossy().into(),
+            meta_path: meta_path.to_string_lossy().into(),
             key: [0u8; 32],
             salt: Vec::new(),
         }
